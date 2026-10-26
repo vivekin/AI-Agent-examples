@@ -11,12 +11,13 @@ Later, to use a paid API instead, change only these three things:
 from openai import OpenAI
 
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")  # key ignored locally
-MODEL = "gemma3:4b"  # must match a model you pulled (see `ollama list`)
+MODEL = "qwen3.5:0.8b"  # must match a model you pulled (see `ollama list`)
 
 # ---- 1. The simplest possible call ----------------------------------------
 response = client.chat.completions.create(
     model=MODEL,
     messages=[{"role": "user", "content": "What is a token in an LLM? One sentence."}],
+    reasoning_effort="none",
 )
 print(response.choices[0].message.content)
 
@@ -31,6 +32,7 @@ response = client.chat.completions.create(
         {"role": "system", "content": "You are a pirate. Answer in max 2 sentences."},
         {"role": "user", "content": "What is a token in an LLM?"},
     ],
+    reasoning_effort="none",
 )
 print("\nWith system prompt:\n", response.choices[0].message.content)
 
@@ -40,6 +42,7 @@ for temp in (0, 1.5):
         model=MODEL,
         temperature=temp,
         messages=[{"role": "user", "content": "Give me a name for a coffee shop. Just the name."}],
+        reasoning_effort="none",
     )
     print(f"\ntemperature={temp}:", r.choices[0].message.content.strip())
 
@@ -49,6 +52,7 @@ stream = client.chat.completions.create(
     model=MODEL,
     stream=True,
     messages=[{"role": "user", "content": "Count from 1 to 10 in words."}],
+    reasoning_effort="none",
 )
 for chunk in stream:
     print(chunk.choices[0].delta.content or "", end="", flush=True)
@@ -62,7 +66,7 @@ while True:
     if user.strip().lower() == "quit":
         break
     history.append({"role": "user", "content": user})
-    r = client.chat.completions.create(model=MODEL, messages=history)
+    r = client.chat.completions.create(model=MODEL, messages=history, reasoning_effort="none",)
     answer = r.choices[0].message.content
     history.append({"role": "assistant", "content": answer})
     print("bot:", answer)

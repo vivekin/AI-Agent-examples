@@ -11,11 +11,11 @@ works later with a paid API: change base_url, api_key and MODEL.
 from openai import OpenAI
 
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")  # key is ignored locally
-MODEL = "gemma3:4b"  # must match a model you pulled
+MODEL = "qwen3.5:0.8b"  # must match a model you pulled
 
 
 def ask(messages, temperature=0.7):
-    r = client.chat.completions.create(model=MODEL, messages=messages, temperature=temperature)
+    r = client.chat.completions.create(model=MODEL, messages=messages, temperature=temperature, reasoning_effort="none")
     print(r.choices[0].message.content.strip())
     u = r.usage
     print(f"  [tokens: prompt={u.prompt_tokens}, answer={u.completion_tokens}]\n")
